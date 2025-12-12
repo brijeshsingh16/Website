@@ -306,7 +306,7 @@
           <li><a href="#header">Home</a></li>
           <li><a href="#about">About Us</a></li>
           <li><a href="#services">Services</a></li>
-          <li><a href="#portfolio">My Work</a></li>
+          <li><a href="#work">My Work</a></li>
           <li><a href="ourcourses.html">Courses</a></li>
           <li><a href="#contact">Contact</a></li>
         </ul>
@@ -374,24 +374,24 @@
     <div class="container">
       <h1 class="sub-title">My Work</h1>
       <div class="work-list">
-        <div class="work">
-          <img src="Photos/race.png" alt="Race Game" />
+        <div class="work" tabindex="0">
+          <img src="Photos/race.png" alt="Screenshot of Race Game project" />
           <div class="layer">
             <h3>Race Game</h3>
             <p>An interactive number race game from 1 to 100, where players advance by turns, inspired by Snakes & Ladders, built with HTML, CSS, and JavaScript.</p>
             <a href="race.html" target="_blank">View</a>
           </div>
         </div>
-        <div class="work">
-          <img src="Photos/task.png" alt="Task Manager" />
+        <div class="work" tabindex="0">
+          <img src="Photos/task.png" alt="Screenshot of Task Manager project" />
           <div class="layer">
             <h3>Task Manager</h3>
             <p>A lightweight task manager to add, delete using HTML, CSS, and JavaScript.</p>
             <a href="task.html" target="_blank">View</a>
           </div>
         </div>
-        <div class="work">
-          <img src="Photos/cricket.png" alt="Cricket Game" />
+        <div class="work" tabindex="0">
+          <img src="Photos/cricket.png" alt="Screenshot of Cricket Game project" />
           <div class="layer">
             <h3>Cricket Game</h3>
             <p>This is a two-player, turn-based cricket game where each player gets 6 balls, scoring randomly between 0–6 per hit. The game shows turns, updates scores, and announces the winner or a draw, with a responsive, animated design.</p>
@@ -447,45 +447,19 @@
       document.getElementById(tabname).classList.add("active-tab");
     }
 
-    // Back to top button
-    const backToTopBtn = document.getElementById("backToTop");
-    window.addEventListener("scroll", () => {
-      backToTopBtn.style.display = window.scrollY > 300 ? "block" : "none";
-    });
-    backToTopBtn.addEventListener("click", () => {
-      window.scrollTo({ top: 0, behavior: "smooth" });
-    });
+    // Mobile nav toggle
+    const menuToggle = document.getElementById('menu-toggle');
+    const navMenu = document.getElementById('nav-menu');
+    menuToggle.addEventListener('click', () => { navMenu.classList.toggle('show'); });
 
-    // Mobile menu toggle
-    const menuToggle = document.getElementById("menu-toggle");
-    const navMenu = document.getElementById("nav-menu");
-    menuToggle.addEventListener("click", () => {
-      navMenu.classList.toggle("show");
-      menuToggle.classList.toggle("open");
-    });
-    navMenu.querySelectorAll("a").forEach(link => {
-      link.addEventListener("click", () => {
-        navMenu.classList.remove("show");
-        menuToggle.classList.remove("open");
-      });
-    });
-
-    // Form submission to Google Sheets placeholder
-    const form = document.forms['submit-to-google-sheet'];
-    form.addEventListener('submit', e => {
-      e.preventDefault();
-      document.getElementById('msg').textContent = 'Form submitted successfully!';
-      form.reset();
-    });
+    // Back to top
+    const backToTop = document.getElementById("backToTop");
+    window.onscroll = () => {
+      if (document.body.scrollTop > 100 || document.documentElement.scrollTop > 100) {
+        backToTop.style.display = "block";
+      } else { backToTop.style.display = "none"; }
+    };
+    backToTop.addEventListener('click', () => { window.scrollTo({ top: 0, behavior: 'smooth' }); });
   </script>
 </body>
 </html>
-
-
-
-
-
-
-
-
-
