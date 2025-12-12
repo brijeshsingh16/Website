@@ -1,0 +1,261 @@
+<!doctype html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<meta name="viewport" content="width=device-width, initial-scale=1.0">
+		<style>
+			body 
+			{
+				margin: 0;
+				padding: 0;
+
+				/* Animated gradient background */
+				background: linear-gradient(135deg, #000428, #004e92, #0a84ff);
+				background-size: 300% 300%;
+				animation: gradientMove 10s ease infinite;
+
+				/* Center UI */
+				display: flex;
+				flex-direction: column;
+				justify-content: center;
+				align-items: center;
+
+				/* Game-style font */
+				font-family: "Orbitron", Arial, sans-serif;
+				letter-spacing: 1px;
+
+				min-height: 100vh;
+
+				/* Smooth fade-in effect */
+				animation: fadeIn 1.5s ease-in-out;
+
+				color: white;
+			}
+
+			/* Gradient animation */
+			@keyframes gradientMove 
+			{
+				0% { background-position: 0% 50%; }
+				50% { background-position: 100% 50%; }
+				100% { background-position: 0% 50%; }
+			}
+
+			/* Page fade-in animation */
+			@keyframes fadeIn 
+			{
+				from { opacity: 0; transform: scale(0.98); }
+				to   { opacity: 1; transform: scale(1); }
+			}
+
+			.outer 
+			{
+				width: 90%;
+				max-width: 800px;
+				height: auto;
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
+				box-shadow:5px 5px 30px black;
+				margin: 80px auto 0 auto;
+			}
+
+			.sub_box 
+			{
+				width: 100%;
+				max-width: 360px;
+				height: auto;
+				border: 1px solid black;
+				background: gray;
+				padding: 20px;
+				margin: 10px;
+				box-sizing: border-box;
+			}
+
+			input[type="button"] 
+			{
+				padding: 10px 25px;
+				font-size: 20px;
+				border-radius: 5px;
+			}
+
+			#a_ind, #b_ind 
+			{
+				width: 5vw;
+				height: 5vw;
+				max-width: 30px;
+				max-height: 30px;
+				border-radius: 50%;
+			}
+
+			#a_ind 
+			{
+				background: green;
+			}
+
+			#b_ind 
+			{
+				background: red;
+			}
+
+			#result {
+				text-align: center;
+				margin-top: 20px;
+			}
+
+			.title 
+			{
+				text-align: center;
+				font-size: 60px;
+				color: white;
+				margin-top: 50px;
+			}
+
+			/* Media Queries for smaller screens */
+			@media (max-width: 600px) 
+			{
+				.title 
+				{
+					font-size: 40px;
+				}
+
+				.sub_box h2 
+				{
+					font-size: 20px;
+				}
+
+				input[type="button"] 
+				{
+					font-size: 18px;
+					padding: 8px 20px;
+				}
+
+				#a_ind, #b_ind 
+				{
+					width: 20px;
+					height: 20px;
+				}
+
+				h1#val_a, h1#val_b
+				{
+					font-size: 40px;
+				}
+			}
+		</style>
+
+		<script>
+			var leftA = 6;   
+			var leftB = 6; 
+			var scoreA = 0;
+			var scoreB = 0;
+
+			// Generating random number 0 to 6
+			function getRandom() 
+			{
+				var min=0,max=6;
+				return Math.floor(Math.random()*(max-min+1))+min;
+			}
+
+			function hit_a() 
+			{
+				if (leftA > 0) 
+				{
+					leftA--;
+					document.getElementById("left_a").innerText= leftA;
+				}
+				var x = getRandom();
+				document.getElementById("val_a").innerText = x;
+				scoreA += x;
+				document.getElementById("score_a").innerText = scoreA;
+
+				document.getElementById("a_ind").style.background= "red";
+				document.getElementById("b_ind").style.background= "green";
+
+				document.getElementById("btn_a").disabled = true;
+				document.getElementById("btn_b").disabled = false;
+
+				checkWinner();
+			}
+
+			function hit_b()
+			{
+				if (leftB > 0) 
+				{
+					leftB--;
+					document.getElementById("left_b").innerText = leftB;
+				}
+				var x = getRandom();
+				document.getElementById("val_b").innerText = x;
+				scoreB += x;
+				document.getElementById("score_b").innerText = scoreB;
+
+				document.getElementById("a_ind").style.background= "green";
+				document.getElementById("b_ind").style.background= "red";
+
+				document.getElementById("btn_b").disabled = true;
+				if(leftB > 0) 
+				{
+					document.getElementById("btn_a").disabled = false;
+				}
+
+				checkWinner();
+			}
+
+			function checkWinner() 
+			{
+				if (leftA === 0 && leftB === 0) 
+				{
+					var result = "";
+
+					if (scoreA > scoreB)
+					{
+						result = "Player 1 Wins";
+					}
+					else if (scoreB > scoreA) 
+					{
+						result = "Player 2 Wins";
+					} 
+					else
+					{
+						result = "Draw";
+					}
+
+					document.getElementById("result").innerHTML = result;
+					document.getElementById("a_ind").style.background = "red";
+					document.getElementById("b_ind").style.background = "red";
+				}
+			}
+		</script>
+	</head>
+
+	<body>
+		<h1 class="title">CRICKET GAME</h1>
+
+		<div class="outer">
+			<div class="sub_box">
+				<div id="a_ind"></div>
+				<h2>PLAYER - 1</h2>
+				<h4 align="right">Ball Left : <span id="left_a">6</span></h4>
+				<br/><br/>
+				<h1 align="center" id="val_a">0</h1>
+				<center id="res_a">
+					<input type="button" id="btn_a" value="HIT" onclick="hit_a()"/>
+				</center>
+				<h4 align="center">SCORE : <span id="score_a">0</span></h4>
+			</div>
+
+			<div class="sub_box">
+				<div id="b_ind"></div>
+				<h2>PLAYER - 2</h2>
+				<h4 align="right">Ball Left : <span id="left_b">6</span></h4>       
+				<br/><br/>
+				<h1 align="center" id="val_b">0</h1>
+				<center id="res_b">
+					<input type="button" id="btn_b" value="HIT" onclick="hit_b()" disabled>
+				</center>
+				<h4 align="center">SCORE : <span id="score_b">0</span></h4>
+			</div>
+		</div>
+
+		<h1 id="result"></h1>
+	</body>
+</html>
