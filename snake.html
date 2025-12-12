@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Snake and Ladder Game</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            /* Amazing dark gradient */
+            background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
+            color: #f0f8ff;
+            margin: 0;
+            padding: 0;
+        }
+        h1 {
+            margin-top: 20px;
+            color: #ffd700;
+            text-shadow: 2px 2px 5px #000;
+            font-size: 2em; /* decreased from 2.5em */
+        }
+        #board {
+            display: grid;
+            grid-template-columns: repeat(10, 50px);
+            grid-template-rows: repeat(10, 50px);
+            gap: 2px;
+            width: 520px;
+            margin: 20px auto;
+            border: 3px solid #ffd700;
+            border-radius: 10px;
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 5px;
+        }
+        .cell {
+            border: 1px solid #333;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-size: 14px; /* decreased from 16px */
+            background-color: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            position: relative;
+            border-radius: 5px;
+            transition: background 0.3s, transform 0.2s;
+        }
+        .cell:hover {
+            background-color: rgba(255, 215, 0, 0.3);
+            transform: scale(1.05);
+        }
+        .player {
+            width: 24px;
+            height: 24px;
+            background-color: #ff4500;
+            border-radius: 50%;
+            position: absolute;
+            border: 2px solid #fff;
+        }
+        #controls {
+            margin-top: 30px;
+            font-size: 1.1em; /* decreased from 1.2em */
+        }
+        #rollBtn {
+            padding: 12px 25px;
+            font-size: 1.1em; /* decreased from 1.2em */
+            font-weight: bold;
+            border: none;
+            border-radius: 10px;
+            background: linear-gradient(135deg, #ff416c, #ff4b2b);
+            color: #fff;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        #rollBtn:hover {
+            transform: scale(1.1);
+            box-shadow: 0px 4px 15px rgba(255, 65, 0, 0.6);
+        }
+        #diceValue, #playerPos {
+            font-weight: bold;
+            color: #ffd700;
+        }
+    </style>
+</head>
+<body>
+    <h1>Snake and Ladder Game</h1>
+    <div id="board"></div>
+    <div id="controls">
+        <button id="rollBtn">Roll Dice</button>
+        <p>Dice: <span id="diceValue">0</span></p>
+        <p>Position: <span id="playerPos">1</span></p>
+    </div>
+    <script>
+        const board = document.getElementById('board');
+        const rollBtn = document.getElementById('rollBtn');
+        const diceValue = document.getElementById('diceValue');
+        const playerPosElem = document.getElementById('playerPos');
+
+        let playerPos = 1;
+
+        // Snakes and Ladders mapping: key = start, value = end
+        const snakesAndLadders = {
+            4: 14,
+            9: 31,
+            17: 7,
+            20: 38,
+            28: 84,
+            40: 59,
+            51: 67,
+            54: 34,
+            62: 19,
+            63: 81,
+            64: 60,
+            71: 91,
+            87: 24,
+            93: 73,
+            95: 75,
+            99: 78
+        };
+
+        // Create board cells
+        for (let i = 100; i >= 1; i--) {
+            const cell = document.createElement('div');
+            cell.className = 'cell';
+            cell.id = `cell-${i}`;
+            cell.innerText = i;
+            board.appendChild(cell);
+        }
+
+        // Create player element
+        const player = document.createElement('div');
+        player.className = 'player';
+        document.getElementById(`cell-${playerPos}`).appendChild(player);
+
+        function movePlayer(steps) {
+            let nextPos = playerPos + steps;
+            if (nextPos > 100) {
+                nextPos = 100 - (nextPos - 100); // Bounce back if over 100
+            }
+
+            // Check for snakes or ladders
+            if (snakesAndLadders[nextPos]) {
+                nextPos = snakesAndLadders[nextPos];
+            }
+
+            // Move player
+            document.getElementById(`cell-${playerPos}`).removeChild(player);
+            playerPos = nextPos;
+            document.getElementById(`cell-${playerPos}`).appendChild(player);
+            playerPosElem.innerText = playerPos;
+
+            // Check for win
+            if (playerPos === 100) {
+                alert("Congratulations! You won!");
+                playerPos = 1;
+                document.getElementById(`cell-100`).removeChild(player);
+                document.getElementById(`cell-1`).appendChild(player);
+                playerPosElem.innerText = playerPos;
+            }
+        }
+
+        rollBtn.addEventListener('click', () => {
+            const dice = Math.floor(Math.random() * 6) + 1;
+            diceValue.innerText = dice;
+            movePlayer(dice);
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>1 to 100 Race Game</title>
+<style>
+body { 
+  font-family: Arial, sans-serif; 
+  text-align: center; 
+  margin-top: 20px;
+  background: linear-gradient(to right, #0f2027, #203a43);
+  color: #fff;
+}
+#board { 
+  width: 620px; 
+  margin: 0 auto; 
+  font-size: 0; 
+}
+.cell {
+  width: 60px; 
+  height: 60px; 
+  border: 1px solid white;
+  display: inline-block; 
+  line-height: 20px; 
+  vertical-align: top;
+  font-size: 14px; 
+  text-align: center; 
+  position: relative;
+  padding-top: 15px; 
+  box-sizing: border-box;
+}
+.playerCircle {
+  width: 12px; 
+  height: 12px; 
+  border-radius: 50%;
+  display: inline-block; 
+  margin: 1px;
+}
+#gameContainer { 
+  display: flex; 
+  justify-content: space-between; 
+  width: 900px; 
+  margin: 0 auto; 
+}
+#controlsContainer { 
+  text-align: left; 
+  margin-left: 20px; 
+}
+#playerList div { 
+  margin-bottom: 10px; 
+}
+button { 
+  cursor: pointer;
+  font-size: 16px;
+  padding: 5px 10px;
+}
+
+/* Increased font size for dropdown */
+#playerSelection {
+  font-size: 18px; 
+  padding: 5px;
+  margin-top: 5px;
+}
+
+/* Style the label bigger and bold */
+#controlsContainer label {
+  font-size: 18px;
+  font-weight: bold;
+  display: block;
+  margin-bottom: 5px;
+}
+
+/* Increased font size for player labels */
+#playerList div span {
+  font-size: 16px; 
+  font-weight: bold;
+}
+
+/* Style OK button like other buttons */
+#confirmBtn {
+  font-size: 16px;
+  padding: 5px 10px;
+  margin-top: 10px;
+  margin-bottom: 20px;
+}
+</style>
+</head>
+<body>
+
+<h1>1 To 100 Race Game</h1>
+
+<div id="gameContainer">
+
+  <div id="boardContainer">
+    <div id="board"></div>
+  </div>
+
+  <div id="controlsContainer">
+    <label for="playerSelection">Select number of players:</label>
+    <select id="playerSelection">
+      <option value="1">1 Player</option>
+      <option value="2">2 Players</option>
+      <option value="3">3 Players</option>
+      <option value="4">4 Players</option>
+    </select>
+
+    <button id="confirmBtn">OK</button>
+    <div id="playerList" style="margin-top: 20px;"></div>
+  </div>
+
+</div>
+
+<script>
+const board = document.getElementById('board');
+for (let i = 100; i >= 1; i--) {
+  const cell = document.createElement('div');
+  cell.className = 'cell';
+  cell.id = 'cell' + i;
+  cell.innerHTML = '<div class="cellNumber">' + i + '</div><div class="playerContainer" style="position:absolute; bottom:2px; left:2px; right:2px;"></div>';
+  board.appendChild(cell);
+}
+
+const playerSelect = document.getElementById('playerSelection');
+const confirmBtn = document.getElementById('confirmBtn');
+const playerListDiv = document.getElementById('playerList');
+
+const playerColors = ['red', 'orange', 'skyblue', 'green'];
+let playerPositions = [];
+let playerButtons = [];
+let currentPlayer = 0;
+let numPlayers = 0;
+let gameOver = false;
+
+confirmBtn.addEventListener('click', function() {
+  numPlayers = parseInt(playerSelect.value);
+  playerPositions = [];
+  playerButtons = [];
+  playerListDiv.innerHTML = '';
+  gameOver = false;
+
+  // Clear old circles
+  for (let i = 1; i <= 100; i++) {
+    const pc = document.getElementById('cell' + i).querySelector('.playerContainer');
+    pc.innerHTML = '';
+  }
+
+  for (let i = 0; i < numPlayers; i++) {
+    const playerNum = i;
+    playerPositions[playerNum] = 1;
+
+    const playerDiv = document.createElement('div');
+
+    const playerLabel = document.createElement('span');
+    playerLabel.id = 'player' + playerNum;
+    playerLabel.innerText = 'Player ' + (playerNum + 1) + ': 0';
+    playerLabel.style.color = playerColors[playerNum];
+    playerLabel.style.marginRight = '10px';
+    playerLabel.style.fontWeight = 'bold';
+
+    const btn = document.createElement('button');
+    btn.innerText = 'Roll Dice';
+    playerButtons[playerNum] = btn;
+
+    btn.addEventListener('click', (function(playerNum) {
+      return function() {
+        if (gameOver) return;
+
+        const dice = Math.floor(Math.random() * 6) + 1;
+        document.getElementById('player' + playerNum).innerText = 'Player ' + (playerNum + 1) + ': ' + dice;
+
+        const oldPos = playerPositions[playerNum];
+        const oldCell = document.getElementById('cell' + oldPos).querySelector('.playerContainer');
+        const circle = document.getElementById('playerCircle' + playerNum);
+        if (circle) oldCell.removeChild(circle);
+
+        let newPos = playerPositions[playerNum] + dice;
+        if (newPos > 100) newPos = 100;
+        playerPositions[playerNum] = newPos;
+
+        const newCell = document.getElementById('cell' + newPos).querySelector('.playerContainer');
+        const newCircle = document.createElement('div');
+        newCircle.className = 'playerCircle';
+        newCircle.style.backgroundColor = playerColors[playerNum];
+        newCircle.id = 'playerCircle' + playerNum;
+        newCell.appendChild(newCircle);
+
+        if (newPos === 100) {
+          playerLabel.innerText += ' - Winner!';
+          gameOver = true;
+          for (let j = 0; j < numPlayers; j++) {
+            playerButtons[j].disabled = true;
+          }
+          return;
+        }
+
+        currentPlayer = (currentPlayer + 1) % numPlayers;
+        updateButtons();
+      }
+    })(playerNum));
+
+    playerDiv.appendChild(playerLabel);
+    playerDiv.appendChild(btn);
+    playerListDiv.appendChild(playerDiv);
+
+    const initialCell = document.getElementById('cell1').querySelector('.playerContainer');
+    const circle = document.createElement('div');
+    circle.className = 'playerCircle';
+    circle.style.backgroundColor = playerColors[playerNum];
+    circle.id = 'playerCircle' + playerNum;
+    initialCell.appendChild(circle);
+  }
+
+  currentPlayer = 0;
+  updateButtons();
+});
+
+function updateButtons() {
+  for (let i = 0; i < numPlayers; i++) {
+    playerButtons[i].disabled = i !== currentPlayer || gameOver;
+  }
+}
+</script>
+
+</body>
+</html>
